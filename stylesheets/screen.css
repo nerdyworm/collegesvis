@@ -1,0 +1,40 @@
+body {
+  background: #ffffff;
+  font-family: Helvetica;
+  margin: 0; padding: 0;
+}
+
+#container {
+  margin: 20px auto;
+  width: 900px;
+}
+
+#views {
+  float: left;
+  width: 680px;
+  height: 650px;
+  margin-right: 20px;
+}
+
+#tabs {
+  height: 600px;
+}
+
+
+#controls {
+  width: 200px;
+  float: left;
+}
+
+.control {
+  margin-bottom: 25px;
+}
+
+.control h5 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.slider {
+  margin-bottom: 10px;
+}

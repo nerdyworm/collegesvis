@@ -41,4 +41,17 @@ body {
 
 table {
   font-size: 12px;
+  width: 100%;
+}
+
+table tr:nth-child(odd)  {
+  background: #cae2ef;
+}
+
+table td {
+  padding: 2px 1px;
+}
+
+#data_view {
+  overflow: scroll;
 }

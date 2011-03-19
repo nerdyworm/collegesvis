@@ -7,24 +7,25 @@
     // after we load the data we will update
     // the interface for the first time.
     $.getJSON('data/data.json', function(d) {
-      data = d;
-      console.log(data);
-      var html = ""
+      var html = "";
       //fill in the raw data view with this data
-      for(i = 0; i < data.length; i++) {
+      var i;
+      for(i = 0; i < d.length; i++) {
         html += "<tr>";
-        html += "<td>" + data[i].name + "</td>";
-        html += "<td>" + data[i].annual_tuition + "</td>";
-        html += "<td>" + data[i].reputation + "</td>";
-        html += "<td>" + data[i].job_prospects + "</td>";
-        html += "<td>" + data[i].financial_aid + "</td>";
-        html += "<td>" + data[i].type + "</td>";
-        html += "<td>" + data[i].location_size + "</td>";
+        html += "<td>" + d[i].name + "</td>";
+        html += "<td>" + d[i].annual_tuition + "</td>";
+        html += "<td>" + d[i].reputation + "</td>";
+        html += "<td>" + d[i].job_prospects + "</td>";
+        html += "<td>" + d[i].financial_aid + "</td>";
+        html += "<td>" + d[i].type + "</td>";
+        html += "<td>" + d[i].location_size + "</td>";
         html += "</tr>";
       }
 
-      console.log(html);
       $("#raw_data").append(html);
+
+      data = d;
+
       update();
     });
 
@@ -63,12 +64,14 @@
     var paper = Raphael("graph", gw, gh);
 
 
-    function draw_bar(values, index, total) {
+    function draw_bar(values, index) {
 
-      var bar_width = 25; //TODO: calculate width based on number of bars needed
+      // incorrect but gives me the desired output as it
+      var bar_width = (gw / data.length + 1) / 2; 
 
       var last_height = 0;
 
+      var i;
       for(i = 0; i < values.length; i++) {
         var height = height_on_paper(values[i]);
 
@@ -79,7 +82,6 @@
 
         last_height += height;
       }
-      
     }
 
     // don't like these fn names....
@@ -94,19 +96,39 @@
     }
 
     function x_position(index, width) {
-      return padding + (10 * index) + (width * index);
+      return padding + (5 * index) + (width * index);
     }
 
+    function scale_cost(value) {
+      return (value * ($("#cost").slider('value') / 100)) / 200;
+    }
+
+    function scale_rep(value) {
+      return value * ($("#reputation").slider('value') / 10);
+    }
 
     function draw() {
-      var values = [];
+      // for each data point we need to
+      // run it through the filtering function
+      // then draw it
+      //
+      var i = 0;
+      for(i = 0; i < data.length; i++) {
+        var values = [];
+        values[0] = scale_cost(parseInt(data[i].annual_tuition, 10));
+        values[1] = scale_rep(parseInt(data[i].reputation, 10));
 
-      $sliders.each(function(index) {
+        draw_bar(values, i);
+      }
+
+
+      /*$sliders.each(function(index) {
         values[index] = $(this).slider('value');
       });
+
       draw_bar(values, 0, 2);    
       draw_bar([10, 50, 30], 1, 2);    
-      draw_bar(values, 2, 4);
+      draw_bar(values, 2, 4);*/
     }
 
     function slider_changed() {

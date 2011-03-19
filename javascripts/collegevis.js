@@ -16,7 +16,8 @@
 
     // make controlls active
     $sliders.slider({value: init_slider_value});
-    $sliders.bind('slide', update);
+    $sliders.bind('slide', function() { update(); });
+    $sliders.bind('change', function() { udpdate(); });
 
     $tabs.tabs();
 

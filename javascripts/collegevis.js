@@ -1,8 +1,32 @@
 (function( $ ){
   var Collegevis = function() {
-    var sample_data = [
-      { }, { }
-    ];
+    // load the json data that should be located
+    // at root/data/data.json
+    var data = [];
+
+    // after we load the data we will update
+    // the interface for the first time.
+    $.getJSON('data/data.json', function(d) {
+      data = d;
+      console.log(data);
+      var html = ""
+      //fill in the raw data view with this data
+      for(i = 0; i < data.length; i++) {
+        html += "<tr>";
+        html += "<td>" + data[i].name + "</td>";
+        html += "<td>" + data[i].annual_tuition + "</td>";
+        html += "<td>" + data[i].reputation + "</td>";
+        html += "<td>" + data[i].job_prospects + "</td>";
+        html += "<td>" + data[i].financial_aid + "</td>";
+        html += "<td>" + data[i].type + "</td>";
+        html += "<td>" + data[i].location_size + "</td>";
+        html += "</tr>";
+      }
+
+      console.log(html);
+      $("#raw_data").append(html);
+      update();
+    });
 
     // defaults
     var init_slider_value = 65;
@@ -98,8 +122,6 @@
 
       draw();
     }
-
-    draw();
   };
 
 

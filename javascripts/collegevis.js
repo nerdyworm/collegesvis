@@ -67,7 +67,6 @@
     // the thing we draw on
     var paper = Raphael("graph", gw, gh);
 
-
     function draw_bar(values, index) {
 
       // incorrect but gives me the desired output as it is
@@ -83,9 +82,18 @@
         var x = x_position(index, bar_width);
 
         var bar = paper.rect(x, y, bar_width, height);
+        
+        //this is no good... 
+        bar.hover(function() {
+          hovered(index);
+        });
 
         last_height += height;
       }
+    }
+
+    function hovered(index) {
+      $("#hover").html(data[index].name);
     }
 
     // don't like these fn names....

@@ -26,6 +26,8 @@
 
       data = d;
 
+      console.log(data);
+
       update();
     });
 
@@ -44,6 +46,8 @@
     $sliders.bind('slide', function() { update(); });
     $sliders.bind('change', function() { udpdate(); });
 
+    $("input[type=radio]").bind('click', function() { update(); });
+    $("input[type=checkbox]").bind('click', function() { update(); });
     $tabs.tabs();
 
     // make the views same height as controlls
@@ -66,7 +70,7 @@
 
     function draw_bar(values, index) {
 
-      // incorrect but gives me the desired output as it
+      // incorrect but gives me the desired output as it is
       var bar_width = (gw / data.length + 1) / 2; 
 
       var last_height = 0;
@@ -99,6 +103,11 @@
       return padding + (5 * index) + (width * index);
     }
 
+    // scaling functions for data
+    // 
+    // each function will scale it's particular
+    // data point to the value that it should be
+    // on the graph
     function scale_cost(value) {
       return (value * ($("#cost").slider('value') / 100)) / 200;
     }
@@ -107,28 +116,47 @@
       return value * ($("#reputation").slider('value') / 10);
     }
 
+    function scale_finaid(value) {
+      return value * ($("#finaid").slider('value') / 10);
+    }
+
+    function scale_job(value) {
+      return value * ($("#jobs").slider('value') / 10);
+    }
+
+    function scale_type(value) {
+      var v = 0;
+      $(".type_checkbox:checked").each(function() {
+        if(value == $(this).val()) {
+          v = 10 * ($("#type").slider('value') / 10);
+        }
+      });
+      return v;
+    }
+
+    function scale_location_size(value) {
+      var v = 0;
+      $(".location_size:checked").each(function() {
+        if(value == $(this).val()) {
+          v = 10 * ($("#location").slider('value') / 10);
+        }
+      });
+      return v;
+    }
+
     function draw() {
-      // for each data point we need to
-      // run it through the filtering function
-      // then draw it
-      //
       var i = 0;
       for(i = 0; i < data.length; i++) {
         var values = [];
         values[0] = scale_cost(parseInt(data[i].annual_tuition, 10));
         values[1] = scale_rep(parseInt(data[i].reputation, 10));
+        values[2] = scale_finaid(parseInt(data[i].financial_aid, 10));
+        values[3] = scale_job(parseInt(data[i].job_prospects, 10));
+        values[4] = scale_type(data[i].type);
+        values[5] = scale_location_size(data[i].location_size);
 
         draw_bar(values, i);
       }
-
-
-      /*$sliders.each(function(index) {
-        values[index] = $(this).slider('value');
-      });
-
-      draw_bar(values, 0, 2);    
-      draw_bar([10, 50, 30], 1, 2);    
-      draw_bar(values, 2, 4);*/
     }
 
     function slider_changed() {

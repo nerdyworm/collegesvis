@@ -41,16 +41,17 @@
         $tabs     = $("#tabs"),
         $views    = $('#views');
 
-
+    // pretty colors
     var colors = [
       '#ECD078',
-      '#D95B43',
-      '#C02942',
-      '#542437',
+      '#C7F464',
       '#53777A',
-      '#C7F464'
+      '#D95B43',
+      '#542437',
+      '#C02942'
     ];
 
+    // add the color to the controls
     $(".control").each(function(index) {
       $(this).append($('<div class="color"></div>').css({'background': colors[index]}));
     });
@@ -72,43 +73,36 @@
     $tabs.find(".ui-tabs-panel").height($controls.outerHeight() - 80);
 
     $graph.height($controls.outerHeight() - 80);
-    
+
     var gh = $graph.height(),
         gw = $graph.width(),
         padding = 20,
-        max_value = 700;
+        max_value = 800;
 
     // the thing we draw on
     var paper = Raphael("graph", gw, gh);
-
-
-
-
+    var txt = {font: '10px Helvetica, Arial', fill: "#000"};
+    
     function draw_bar(values, index) {
-
-      // incorrect but gives me the desired output as it is
-      var bar_width = (gw / data.length + 1) / 2; 
-
-      var last_height = 0;
-
+      var bh = Math.floor(gh / data.length);
+      var last_width = 130;
       var i;
       for(i = 0; i < values.length; i++) {
-        var height = height_on_paper(values[i]);
+        var scale = gw / max_value,
+            width = (values[i] * scale);
 
-        var y = bottom_paper(height) - last_height;
-        var x = x_position(index, bar_width);
+        var y = index * bh;
+        var bar = paper.rect(last_width, y, width, bh);
 
-        var bar = paper.rect(x, y, bar_width, height);
-        
-        //this is no good... 
-        bar.hover(function() {
-          hovered(index);
-        });
+        last_width += width;
 
         bar.attr('fill', colors[i]);
-
-        last_height += height;
+        bar.attr("stroke", 'none');
       }
+
+      var text = paper.text(0, index * bh + 3, data[index].name.substring(0, 25));
+      text.attr({'text-anchor': 'start'});
+      text.attr(txt);
     }
 
     function hovered(index) {
@@ -124,6 +118,10 @@
       var total_height = gh - padding,
           scale = total_height / max_value;
       return (value * scale);
+    }
+
+    function y_position(index, width) {
+      return padding + (5 * index) + (width * index);
     }
 
     function x_position(index, width) {
@@ -200,7 +198,6 @@
       draw();
     }
   };
-
 
   $(document).ready(function() {
     var c = new Collegevis({});

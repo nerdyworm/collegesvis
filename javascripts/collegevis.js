@@ -26,8 +26,6 @@
 
       data = d;
 
-      console.log(data);
-
       update();
     });
 

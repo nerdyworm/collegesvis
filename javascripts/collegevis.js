@@ -41,6 +41,20 @@
         $tabs     = $("#tabs"),
         $views    = $('#views');
 
+
+    var colors = [
+      '#ECD078',
+      '#D95B43',
+      '#C02942',
+      '#542437',
+      '#53777A',
+      '#C7F464'
+    ];
+
+    $(".control").each(function(index) {
+      $(this).append($('<div class="color"></div>').css({'background': colors[index]}));
+    });
+
     // make controlls active
     $sliders.slider({value: init_slider_value});
     $sliders.bind('slide', function() { update(); });
@@ -67,6 +81,9 @@
     // the thing we draw on
     var paper = Raphael("graph", gw, gh);
 
+
+
+
     function draw_bar(values, index) {
 
       // incorrect but gives me the desired output as it is
@@ -87,6 +104,8 @@
         bar.hover(function() {
           hovered(index);
         });
+
+        bar.attr('fill', colors[i]);
 
         last_height += height;
       }

@@ -177,15 +177,13 @@
         // if table visible then we should sort it
         // by the score
         //
-        //
         var j = 0, sum = 0;
-        for(j = 0; j < 5; j++) {
+        for(j = 0; j <= 5; j++) {
           sum += values[j];
         }
 
         d[i].value = sum;
       }
-
     }
 
     function draw_table(data) {

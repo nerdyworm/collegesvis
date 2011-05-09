@@ -150,11 +150,12 @@
       if($("#" + id).is(':checked')) {
         v = 10 * ($("#location").slider('value') / 10);
       }
+
       return v;
     }
 
     function update_data(d) {
-      var i = 0;
+      var i = 0, j = 0;
 
       for(i = 0; i < d.length; i++) {
         d[i].value  = 0;
@@ -170,7 +171,7 @@
         // if table visible then we should sort it
         // by the score
         //
-        var j = 0, sum = 0;
+        var sum = 0;
         for(j = 0; j <= 5; j++) {
           sum += d[i].values[j];
         }
@@ -235,9 +236,17 @@
 
     function with_data_source(callback) {
       if(is_sorted()) {
-        return callback($sorted_data.sort(compare_values));
+        return callback($sorted_data);
       } else {
         return callback($data);
+      }
+    }
+
+    function with_sort(_data, callback) {
+      if(is_sorted()) {
+        callback(_data.sort(compare_values));
+      } else {
+        callback(_data);
       }
     }
 
@@ -246,10 +255,12 @@
     }
 
     function update() {
-      with_data_source(function(_data) {
-        with_updates(_data, function(_data) {
-          draw_table(_data);
-          draw_graph(_data);
+      with_data_source(function(a) {
+        with_updates(a, function(b) {
+          with_sort(b, function(c) {
+            draw_table(c);
+            draw_graph(c);
+          });
         });
       });
     }

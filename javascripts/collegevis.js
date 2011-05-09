@@ -7,7 +7,7 @@
     // after we load the data we will update
     // the interface for the first time.
     $.getJSON('data/data.json', function(d) {
-      $data = d;
+      $data        = d;
       $sorted_data = $data.slice();  //copy data for sorts
       update();
     });
@@ -25,12 +25,6 @@
 
     // pretty colors
     var colors = [
-      //'#ECD078'.
-      //'#C7F464',
-      //'#53777A',
-      //'#D95B43',
-      //'#542437',
-      //'#C02942',
       '#66C2A5',
       '#FC8D62',
       '#8DA0CB',
@@ -51,6 +45,7 @@
 
     $("input[type=radio]").bind('click', function() { update(); });
     $("input[type=checkbox]").bind('click', function() { update(); });
+
     $tabs.tabs();
 
     // make the views same height as controlls
@@ -71,7 +66,8 @@
     var paper = Raphael("graph", gw, gh);
     var txt = {font: '10px Helvetica, Arial', fill: "#000"};
 
-    function draw_bar(values, index) {
+    function draw_bar(college, index) {
+      var values = college.values;
       var bh = Math.floor(gh / $data.length);
       var last_width = 130;
       var i;
@@ -88,7 +84,7 @@
         bar.attr("stroke", 'none');
       }
 
-      var text = paper.text(0, index * bh + 3, values.name.substring(0, 25));
+      var text = paper.text(0, index * bh + 3, college.name.substring(0, 25));
 
       text.attr({'text-anchor': 'start'});
       text.attr(txt);
@@ -149,29 +145,26 @@
     }
 
     function scale_location_size(value) {
-      var v = 0;
-      $(".location_size:checked").each(function() {
-        if(value == $(this).val()) {
-          v = 10 * ($("#location").slider('value') / 10);
-        }
-      });
+      var v = 0, id = value.toLowerCase().replace(" ", "_"); // ...
+
+      if($("#" + id).is(':checked')) {
+        v = 10 * ($("#location").slider('value') / 10);
+      }
       return v;
     }
 
-    function draw() {
-      var i = 0, d = data_source();
+    function update_data(d) {
+      var i = 0;
 
       for(i = 0; i < d.length; i++) {
-        var values = [];
-        values[0] = scale_cost(parseInt(d[i].annual_tuition, 10));
-        values[1] = scale_rep(parseInt(d[i].reputation, 10));
-        values[2] = scale_finaid(parseInt(d[i].financial_aid, 10));
-        values[3] = scale_job(parseInt(d[i].job_prospects, 10));
-        values[4] = scale_type(d[i].type);
-        values[5] = scale_location_size(d[i].location_size);
-        values.name = d[i].name;
-
-        draw_bar(values, i);
+        d[i].value  = 0;
+        d[i].values = [];
+        d[i].values[0] = scale_cost(parseInt(d[i].annual_tuition, 10));
+        d[i].values[1] = scale_rep(parseInt(d[i].reputation, 10));
+        d[i].values[2] = scale_finaid(parseInt(d[i].financial_aid, 10));
+        d[i].values[3] = scale_job(parseInt(d[i].job_prospects, 10));
+        d[i].values[4] = scale_type(d[i].type);
+        d[i].values[5] = scale_location_size(d[i].location_size);
 
         // sum the values for the total score
         // if table visible then we should sort it
@@ -179,10 +172,21 @@
         //
         var j = 0, sum = 0;
         for(j = 0; j <= 5; j++) {
-          sum += values[j];
+          sum += d[i].values[j];
         }
 
         d[i].value = sum;
+      }
+
+      return d;
+    }
+
+    function draw_graph(d) {
+      paper.clear();
+
+      var i = 0;
+      for(i = 0; i < d.length; i++) {
+        draw_bar(d[i], i);
       }
     }
 
@@ -208,40 +212,46 @@
 
     function lazy_sort_data() {
       if( is_sorted() ) {
-        $sorted_data = $sorted_data.sort(function(a, b) {
-          return b.value - a.value;
-        });
+        $sorted_data.sort(compare_values);
       }
+      return $sorted_data;
+    }
+
+    function compare_values(a, b) {
+      return b.value - a.value;
     }
 
     function slider_changed() {
-      draw();
+      update();
     }
 
     function slider_slide() {
-      draw();
+      update();
     }
 
     function is_sorted() {
       return $sort.is(':checked');
     }
 
-    function data_source() {
+    function with_data_source(callback) {
       if(is_sorted()) {
-        return $sorted_data;
+        return callback($sorted_data.sort(compare_values));
       } else {
-        return $data;
+        return callback($data);
       }
     }
 
+    function with_updates(_data, callback) {
+      return callback(update_data(_data));
+    }
+
     function update() {
-      paper.clear();
-
-      lazy_sort_data();
-
-      draw_table( data_source() );
-
-      draw();
+      with_data_source(function(_data) {
+        with_updates(_data, function(_data) {
+          draw_table(_data);
+          draw_graph(_data);
+        });
+      });
     }
   };
 

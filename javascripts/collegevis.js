@@ -2,30 +2,13 @@
   var Collegevis = function() {
     // load the json data that should be located
     // at root/data/data.json
-    var data = [];
+    var $data = [], $sorted_data = [];
 
     // after we load the data we will update
     // the interface for the first time.
     $.getJSON('data/data.json', function(d) {
-      var html = "";
-      //fill in the raw data view with this data
-      var i;
-      for(i = 0; i < d.length; i++) {
-        html += "<tr>";
-        html += "<td>" + d[i].name + "</td>";
-        html += "<td>" + d[i].annual_tuition + "</td>";
-        html += "<td>" + d[i].reputation + "</td>";
-        html += "<td>" + d[i].job_prospects + "</td>";
-        html += "<td>" + d[i].financial_aid + "</td>";
-        html += "<td>" + d[i].type + "</td>";
-        html += "<td>" + d[i].location_size + "</td>";
-        html += "</tr>";
-      }
-
-      $("#raw_data").append(html);
-
-      data = d;
-
+      $data = d;
+      $sorted_data = $data.slice();  //copy data for sorts
       update();
     });
 
@@ -37,7 +20,8 @@
         $graph    = $('#graph'),
         $sliders  = $('.slider'),
         $tabs     = $("#tabs"),
-        $views    = $('#views');
+        $views    = $('#views'),
+        $sort     = $('#sort');
 
     // pretty colors
     var colors = [
@@ -80,9 +64,9 @@
     // the thing we draw on
     var paper = Raphael("graph", gw, gh);
     var txt = {font: '10px Helvetica, Arial', fill: "#000"};
-    
+
     function draw_bar(values, index) {
-      var bh = Math.floor(gh / data.length);
+      var bh = Math.floor(gh / $data.length);
       var last_width = 130;
       var i;
       for(i = 0; i < values.length; i++) {
@@ -98,7 +82,8 @@
         bar.attr("stroke", 'none');
       }
 
-      var text = paper.text(0, index * bh + 3, data[index].name.substring(0, 25));
+      var text = paper.text(0, index * bh + 3, values.name.substring(0, 25));
+
       text.attr({'text-anchor': 'start'});
       text.attr(txt);
     }
@@ -127,7 +112,7 @@
     }
 
     // scaling functions for data
-    // 
+    //
     // each function will scale it's particular
     // data point to the value that it should be
     // on the graph
@@ -168,17 +153,60 @@
     }
 
     function draw() {
-      var i = 0;
-      for(i = 0; i < data.length; i++) {
+      var i = 0, d = data_source();
+
+      for(i = 0; i < d.length; i++) {
         var values = [];
-        values[0] = scale_cost(parseInt(data[i].annual_tuition, 10));
-        values[1] = scale_rep(parseInt(data[i].reputation, 10));
-        values[2] = scale_finaid(parseInt(data[i].financial_aid, 10));
-        values[3] = scale_job(parseInt(data[i].job_prospects, 10));
-        values[4] = scale_type(data[i].type);
-        values[5] = scale_location_size(data[i].location_size);
+        values[0] = scale_cost(parseInt(d[i].annual_tuition, 10));
+        values[1] = scale_rep(parseInt(d[i].reputation, 10));
+        values[2] = scale_finaid(parseInt(d[i].financial_aid, 10));
+        values[3] = scale_job(parseInt(d[i].job_prospects, 10));
+        values[4] = scale_type(d[i].type);
+        values[5] = scale_location_size(d[i].location_size);
+        values.name = d[i].name;
 
         draw_bar(values, i);
+
+        // sum the values for the total score
+        // if table visible then we should sort it
+        // by the score
+        //
+        //
+        var j = 0, sum = 0;
+        for(j = 0; j < 5; j++) {
+          sum += values[j];
+        }
+
+        d[i].value = sum;
+      }
+
+    }
+
+    function draw_table(data) {
+      var i, html = "";
+
+      for(i = 0; i < data.length; i++) {
+        html += "<tr>";
+        html += "<td>" + data[i].name + "</td>";
+        html += "<td>" + data[i].annual_tuition + "</td>";
+        html += "<td>" + data[i].reputation + "</td>";
+        html += "<td>" + data[i].job_prospects + "</td>";
+        html += "<td>" + data[i].financial_aid + "</td>";
+        html += "<td>" + data[i].type + "</td>";
+        html += "<td>" + data[i].location_size + "</td>";
+        html += "<td>" + data[i].value + "</td>";
+        html += "</tr>";
+      }
+
+      $("#raw_data").find("tr:gt(0)").remove();
+      $("#raw_data").append(html);
+    }
+
+    function lazy_sort_data() {
+      if( is_sorted() ) {
+        $sorted_data = $sorted_data.sort(function(a, b) {
+          return b.value - a.value;
+        });
       }
     }
 
@@ -190,8 +218,24 @@
       draw();
     }
 
+    function is_sorted() {
+      return $sort.is(':checked');
+    }
+
+    function data_source() {
+      if(is_sorted()) {
+        return $sorted_data;
+      } else {
+        return $data;
+      }
+    }
+
     function update() {
       paper.clear();
+
+      lazy_sort_data();
+
+      draw_table( data_source() );
 
       draw();
     }
@@ -200,4 +244,4 @@
   $(document).ready(function() {
     var c = new Collegevis({});
   });
-})(jQuery );
+})(jQuery);

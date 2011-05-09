@@ -1,22 +1,22 @@
-<!DOCTYPE html> 
-<html> 
-<head> 
-  <title>College Vis</title> 
-  <link href="stylesheets/aristo/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" /> 
-  <link href="stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css" /> 
-  <script src="javascripts/jquery.min.js" type="text/javascript"></script> 
-  <script src="javascripts/jquery-ui.min.js" type="text/javascript"></script> 
-  <script src="javascripts/raphael.min.js" type="text/javascript"></script> 
-  <script src="javascripts/collegevis.js" type="text/javascript"></script> 
-</head> 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>College Vis</title>
+  <link href="stylesheets/aristo/jquery-ui.css" media="screen" rel="stylesheet" type="text/css" />
+  <link href="stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css" />
+  <script src="javascripts/jquery.min.js" type="text/javascript"></script>
+  <script src="javascripts/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="javascripts/raphael.min.js" type="text/javascript"></script>
+  <script src="javascripts/collegevis.js" type="text/javascript"></script>
+</head>
 <body>
   <div id="container">
     <div id="views">
-      <div id="tabs"> 
-			  <ul> 
-				  <li><a href="#graph_view">Graph View</a></li> 
-				  <li><a href="#data_view">Data View</a></li> 
-			  </ul> 
+      <div id="tabs">
+        <ul>
+          <li><a href="#graph_view">Graph View</a></li>
+          <li><a href="#data_view">Data View</a></li>
+        </ul>
         <div id="graph_view">
           <div id="hover"></div>
           <div id="graph" style="border: 1px solid #B6B6B6"></div>
@@ -31,12 +31,16 @@
               <th>Fin Aid</th>
               <th>Type</th>
               <th>Loc. Size</th>
+              <th>Score</th>
             </tr>
           </table>
         </div>
       </div>
     </div>
     <div id="controls">
+      <div class="">
+        <h5>Sort graph?: <input type="checkbox" name="sort" id="sort"/></h5>
+      </div>
       <div class="control">
         <h5>Cost</h5>
         <div id="cost" class="slider"></div>
@@ -57,67 +61,67 @@
         <h5>Type</h5>
         <div id="type" class="slider"></div>
         <div class="radios">
-          <div class="radio"> 
+          <div class="radio">
             <input type="checkbox" value="Liberal Arts" name="liberal_arts" class="type_checkbox" checked/>
-            <label for="radio1">Liberal Arts</label> 
+            <label for="radio1">Liberal Arts</label>
           </div>
           <div class="radio">
             <input type="checkbox" value="University" name="university" class="type_checkbox" checked/>
-            <label for="radio2">University</label> 
+            <label for="radio2">University</label>
           </div>
           <div class="radio">
             <input type="checkbox" value="Bible College" name="bible_college"  class="type_checkbox" checked/>
-            <label for="radio3">Bible College</label> 
+            <label for="radio3">Bible College</label>
           </div>
-		    </div>
+        </div>
       </div>
       <!--
       <div class="control">
         <h5>Size</h5>
         <div id="size" class="slider"></div>
         <div class="radios">
-          <div class="radio"> 
+          <div class="radio">
             <input type="radio" id="radio1" name="radio" />
-            <label for="radio1">Choice 1</label> 
+            <label for="radio1">Choice 1</label>
           </div>
           <div class="radio">
             <input type="radio" id="radio2" name="radio"/>
-            <label for="radio2">Choice 2</label> 
+            <label for="radio2">Choice 2</label>
           </div>
           <div class="radio">
             <input type="radio" id="radio3" name="radio" />
-            <label for="radio3">Choice 3</label> 
+            <label for="radio3">Choice 3</label>
           </div>
-		    </div>
+        </div>
       </div>
-      --> 
+      -->
       <div class="control">
         <h5>Location Size</h5>
         <div id="location" class="slider"></div>
         <div class="radios">
-          <div class="radio"> 
+          <div class="radio">
             <input type="checkbox" name="rural_community" value="Rural Community" class="location_size" checked/>
-            <label>Rural Community</label> 
+            <label>Rural Community</label>
           </div>
-		    </div>
+        </div>
         <div class="radios">
-          <div class="radio"> 
+          <div class="radio">
             <input type="checkbox" name="large_town" value="Large Town" class="location_size" checked/>
-            <label>Large Town</label> 
+            <label>Large Town</label>
           </div>
-		    </div>
+        </div>
         <div class="radios">
-          <div class="radio"> 
+          <div class="radio">
             <input type="checkbox" name="small_city" value="Small City" class="location_size" checked/>
-            <label>Small City</label> 
+            <label>Small City</label>
           </div>
-		    </div>
+        </div>
         <div class="radios">
-          <div class="radio"> 
+          <div class="radio">
             <input type="checkbox" name="very_large_city" value="Very Large City" class="location_size" checked/>
-            <label>Vary Large City</label> 
+            <label>Vary Large City</label>
           </div>
-		    </div>
+        </div>
       </div>
     </div>
   </div>

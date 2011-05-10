@@ -33,6 +33,8 @@
       '#FFD92F'
     ];
 
+    var id_cache = {};
+
     // add the color to the controls
     $(".control").each(function(index) {
       $(this).append($('<div class="color"></div>').css({'background': colors[index]}));
@@ -135,25 +137,31 @@
     }
 
     function scale_type(value) {
-      var v = 0;
-      $(".type_checkbox:checked").each(function() {
-        if(value == $(this).val()) {
-          v = $("#type").slider('value');
-        }
-      });
+      var v = 0, id = sel_for_value(value);
+
+      if($(id).is(':checked')) {
+         v = $("#type").slider('value');
+      }
+
       return v;
     }
 
     function scale_location_size(value) {
-      var v = 0, id = value.toLowerCase().replace(/ /g, "_"); // ...
+      var v = 0, id = sel_for_value(value);
 
-      if($("#" + id).is(':checked')) {
+      if($(id).is(':checked')) {
         v = $("#location").slider('value');
-      } else {
-        console.log(id);
       }
 
       return v;
+    }
+
+    function sel_for_value(value) {
+      if( id_cache[value] === undefined ) {
+        var id = value.toLowerCase().replace(/ /g, "_");
+        id_cache[value] = "#" + id;
+      }
+      return id_cache[value];
     }
 
     function update_data(d) {
@@ -211,13 +219,6 @@
 
       $("#raw_data").find("tr:gt(0)").remove();
       $("#raw_data").append(html);
-    }
-
-    function lazy_sort_data() {
-      if( is_sorted() ) {
-        $sorted_data.sort(compare_values);
-      }
-      return $sorted_data;
     }
 
     function compare_values(a, b) {

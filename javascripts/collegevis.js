@@ -138,17 +138,19 @@
       var v = 0;
       $(".type_checkbox:checked").each(function() {
         if(value == $(this).val()) {
-          v = 10 * ($("#type").slider('value') / 10);
+          v = $("#type").slider('value');
         }
       });
       return v;
     }
 
     function scale_location_size(value) {
-      var v = 0, id = value.toLowerCase().replace(" ", "_"); // ...
+      var v = 0, id = value.toLowerCase().replace(/ /g, "_"); // ...
 
       if($("#" + id).is(':checked')) {
-        v = 10 * ($("#location").slider('value') / 10);
+        v = $("#location").slider('value');
+      } else {
+        console.log(id);
       }
 
       return v;
